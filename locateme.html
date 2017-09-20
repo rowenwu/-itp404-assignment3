@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+        var map;
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: -34.397, lng: 150.644 },
+            zoom: 8
+            });
+        }
+        var lat, lng;
+        let successHandler = function(position) {
+            lat = position.coords.latitude;
+            long =  position.coords.longitude;
+            console.log(position.coords.latitude, position.coords.longitude);
+            // var map;
+            // map = new google.maps.Map(document.getElementById('map'), {
+            //     center: { lat: lat, lng: long },
+            //     zoom: 8
+            // });
+        
+            let home = new google.maps.LatLng(lat, long);
+            let homeMarker = new google.maps.Marker({
+                map: map,
+                position: home,
+                animation: google.maps.Animation.DROP,
+            });
+            map.panTo(homeMarker.getPosition());
+            
+            homeMarker.addListener('click', function() {
+                let geocoder = new google.maps.Geocoder();
+                
+                geocoder.geocode({
+                    location: home
+                }, function(geocoderResults) {
+                    console.log(geocoderResults);
+                    var infowindow = new google.maps.InfoWindow({
+                        content: geocoderResults[0].formatted_address
+                    });
+                    infowindow.open(homeMarker.get('map'), homeMarker);
+                });
+            });
+            
+        };
+        let errorHandler = function(error) {};
+        let options = {};
+        navigator.geolocation.getCurrentPosition(successHandler, errorHandler, options);
+
+        
+      
+  
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcvfWt-DxO5-WYwF_S9jX7m9FnGUlnhH8&callback=initMap"
+    async defer></script>
+  </body>
+</html>
+
